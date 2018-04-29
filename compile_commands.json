@@ -1,7 +1,0 @@
-[
-{
-  "directory": "/home/anthony/Documents/C++/Projects/Typer/build",
-  "command": "/usr/bin/clang++   -I/home/anthony/Documents/C++/Projects/Typer/include  -O3 -DNDEBUG   -Wall -std=gnu++14 -o CMakeFiles/typer.dir/src/main.cpp.o -c /home/anthony/Documents/C++/Projects/Typer/src/main.cpp",
-  "file": "/home/anthony/Documents/C++/Projects/Typer/src/main.cpp"
-}
-]

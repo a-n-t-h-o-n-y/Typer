@@ -3,3 +3,4 @@
 *.so
 notes/
 build*/
+compile_commands.json
