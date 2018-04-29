@@ -1,6 +1,5 @@
 #include <thread>
 
-#define CATCH_CONFIG_MAIN
 #include "catch.hpp"
 
 #include <typer_logic.hpp>

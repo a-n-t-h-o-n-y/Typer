@@ -1,5 +1,6 @@
 # Tests
 add_executable(tests EXCLUDE_FROM_ALL 
+    tests_main.cpp
     typer_logic_test.cpp
     )
 
