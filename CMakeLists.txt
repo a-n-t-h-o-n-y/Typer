@@ -1,22 +1,30 @@
-cmake_minimum_required(VERSION 3.2)
+cmake_minimum_required(VERSION 3.2 FATAL_ERROR)
+project(Typer LANGUAGES CXX)
+include(GNUInstallDirs)
+enable_testing()
+set(CMAKE_BUILD_TYPE Release)
+# set(CMAKE_BUILD_TYPE Debug)
 
-# set(CMAKE_BUILD_TYPE Release)
-set(CMAKE_BUILD_TYPE Debug)
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++14 -Wall")
+# Library
+add_subdirectory(src)
 
-# Logic Library
-add_library(typer_logic src/typer_logic.cpp)
-target_include_directories(typer_logic PUBLIC include)
+# App
+add_executable(typer src/main.cpp )
+target_link_libraries(typer typer_lib)
+target_compile_features(typer PUBLIC cxx_std_14)
+target_compile_options(typer PUBLIC -Wall)
 
-# App Executable
-add_executable(typer src/main.cpp src/typer_app.cpp src/top_bar.cpp
-    src/stats_box.cpp src/typer_widget.cpp src/set_text_widget.cpp
-    src/typing_stack.cpp)
-target_link_libraries(typer PRIVATE typer_logic
-    /usr/local/lib64/liblibcppurses.a ncurses)
+# Install
+install(TARGETS typer
+    RUNTIME  DESTINATION ${CMAKE_INSTALL_BINDIR})
 
 # Unit Tests
-enable_testing()
-add_executable(tests EXCLUDE_FROM_ALL tests/typer_logic_test.cpp)
-target_link_libraries(tests typer_logic)
-add_test(logic_typer tests)
+add_subdirectory(tests)
+
+# CLANG TIDY
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
+add_custom_target(compile_commands ALL
+    COMMAND [ -f ${CMAKE_SOURCE_DIR}/build/compile_commands.json ] && mv
+    	${CMAKE_SOURCE_DIR}/build/compile_commands.json
+    	${CMAKE_SOURCE_DIR}/compile_commands.json || :)
