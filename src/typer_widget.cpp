@@ -7,6 +7,11 @@ namespace ui {
 
 Typer_widget::Typer_widget() {
     this->focus_policy = cppurses::Focus_policy::Strong;
+    enable_border(*this);
+    disable_walls(this->border);
+    disable_corners(this->border);
+    this->border.west_enabled = true;
+    this->border.east_enabled = true;
 }
 
 bool Typer_widget::key_press_event(cppurses::Key key, char symbol) {
