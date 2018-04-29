@@ -6,13 +6,15 @@ namespace typer {
 namespace ui {
 
 Typer_widget::Typer_widget() {
-    enable_border(*this);
     this->focus_policy = cppurses::Focus_policy::Strong;
 }
 
 bool Typer_widget::key_press_event(cppurses::Key key, char symbol) {
     if (key == cppurses::Key::Enter) {
         symbol = '\n';
+    }
+    if (!(std::isprint(symbol) || std::isspace(symbol))) {
+        return Widget::key_press_event(key, symbol);
     }
     auto key_valid{key_pressed(symbol)};
     if (key_valid && *key_valid) {

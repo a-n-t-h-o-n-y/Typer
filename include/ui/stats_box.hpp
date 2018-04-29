@@ -3,7 +3,6 @@
 #include <string>
 
 #include <cppurses/widget/layouts/horizontal_layout.hpp>
-#include <cppurses/widget/layouts/vertical_layout.hpp>
 #include <cppurses/widget/widgets/label.hpp>
 #include <cppurses/widget/widgets/text_display.hpp>
 
@@ -11,18 +10,19 @@ namespace typer {
 namespace ui {
 
 struct Stat : cppurses::Horizontal_layout {
-    Stat(const std::string& label, const std::string& value = "");
+    Stat(const std::string& value_, const std::string& label_);
 
-    cppurses::Label& label;
     cppurses::Text_display& value;
+    cppurses::Label& label;
+    cppurses::Widget& space{this->make_child<cppurses::Widget>()};
 };
 
-struct Stats_box : cppurses::Vertical_layout {
+struct Stats_box : cppurses::Horizontal_layout {
     Stats_box();
-    Stat& wpm_stat{this->make_child<Stat>("WPM:", "0")};
-    Stat& missed_stat{this->make_child<Stat>("Missed:", "0")};
-    Stat& total_stat{this->make_child<Stat>("Total:", "0")};
-    Stat& accuracy_stat{this->make_child<Stat>("Accuracy:", "%")};
+
+    Stat& wpm_stat{this->make_child<Stat>("0", " WPM")};
+    Stat& missed_stat{this->make_child<Stat>("0", " Missed")};
+    Stat& accuracy_stat{this->make_child<Stat>("--.--%", "")};
 };
 
 }  // namespace ui

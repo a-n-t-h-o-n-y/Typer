@@ -9,9 +9,9 @@ add_library(typer_logic src/typer_logic.cpp)
 target_include_directories(typer_logic PUBLIC include)
 
 # App Executable
-add_executable(typer src/main.cpp src/typer_app.cpp src/options_box.cpp
+add_executable(typer src/main.cpp src/typer_app.cpp src/top_bar.cpp
     src/stats_box.cpp src/typer_widget.cpp src/set_text_widget.cpp
-    src/typing_stack.cpp src/top_bar.cpp)
+    src/typing_stack.cpp)
 target_link_libraries(typer PRIVATE typer_logic
     /usr/local/lib64/liblibcppurses.a ncurses)
 

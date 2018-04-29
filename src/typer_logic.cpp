@@ -1,5 +1,8 @@
 #include <typer_logic.hpp>
 
+#include <cctype>
+#include <string>
+
 namespace typer {
 
 void Typer_logic::set_text(std::string text) {
@@ -28,11 +31,13 @@ bool Typer_logic::validate_next_letter(char c) {
         initial_time_ = Clock::now();
     }
     // Correct
-    if (c == text_[current_index_]) {
+    if ((std::isprint(c) || std::isspace(c)) && c == text_[current_index_]) {
         already_missed_ = false;
         ++current_index_;
         ++stats_.total;
-        this->update_wpm();
+        if (current_index_ != 1) {
+            this->update_wpm();
+        }
         return true;
     }
     // Incorrect
@@ -40,7 +45,9 @@ bool Typer_logic::validate_next_letter(char c) {
         ++stats_.missed;
         already_missed_ = true;
     }
-    this->update_wpm();
+    if (current_index_ != 0) {
+        this->update_wpm();
+    }
     return false;
 }
 

@@ -22,6 +22,7 @@ struct Typer_app : public cppurses::Vertical_layout {
 
     void set_text_in_logic_and_typer_display(const std::string& text);
     void update_stats_box();
+    void reset_main_window();
 };
 
 }  // namespace ui
