@@ -1,7 +1,7 @@
 # Tests
 add_executable(tests EXCLUDE_FROM_ALL 
     tests_main.cpp
-    typer_logic_test.cpp
+    typing_test_engine_test.cpp
     )
 
 target_compile_features(tests PUBLIC cxx_std_14)

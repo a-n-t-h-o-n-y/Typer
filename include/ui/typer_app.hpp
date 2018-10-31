@@ -4,7 +4,7 @@
 
 #include <cppurses/widget/layouts/vertical_layout.hpp>
 
-#include <typer_logic.hpp>
+#include <typing_test_engine.hpp>
 #include <ui/top_bar.hpp>
 #include <ui/typing_stack.hpp>
 
@@ -18,9 +18,9 @@ struct Typer_app : public cppurses::Vertical_layout {
     Typing_stack& typing_stack{this->make_child<Typing_stack>()};
 
    private:
-    Typer_logic logic_;
+    Typing_test_engine engine_;
 
-    void set_text_in_logic_and_typer_display(const std::string& text);
+    void set_text_in_engine_and_typer_display(const std::string& text);
     void update_stats_box();
     void reset_main_window();
 };

@@ -15,14 +15,19 @@ Typer_widget::Typer_widget() {
 }
 
 bool Typer_widget::key_press_event(const cppurses::Keyboard_data& keyboard) {
+    // Filter
     char symbol = keyboard.symbol;
     if (keyboard.key == cppurses::Key::Enter) {
         symbol = '\n';
     }
-    if (!(std::isprint(symbol) || std::isspace(symbol))) {
+    if (!(std::isprint(symbol) || std::isspace(symbol)) ||
+        (this->cursor_index() >= this->contents_size())) {
         return Widget::key_press_event(keyboard);
     }
+    // Send to Typing_test_engine.
     auto key_valid{key_pressed(symbol)};
+
+    // Update display based on return from engine.
     if (key_valid && *key_valid) {
         if (last_missed_) {
             last_missed_ = false;
@@ -31,7 +36,7 @@ bool Typer_widget::key_press_event(const cppurses::Keyboard_data& keyboard) {
                 .brush.set_foreground(cppurses::Color::Light_gray);
         }
         this->Textbox_base::cursor_right();
-    } else if (this->cursor_index() < this->contents_size()) {
+    } else {
         last_missed_ = true;
         this->Text_display::glyph_at(this->Textbox_base::cursor_index())
             .brush.set_foreground(cppurses::Color::Red);

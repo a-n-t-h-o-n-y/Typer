@@ -27,7 +27,7 @@ Typer_app::Typer_app() {
                 typing_stack.set_text_widget.textbox.contents().str()};
             sub_string = sub_string.substr(
                 typing_stack.main_window.typer_widget.index_at(0, 0));
-            logic_.set_text(sub_string);
+            engine_.set_text(sub_string);
         });
 
     typing_stack.page_changed.connect([this](std::size_t index) {
@@ -38,7 +38,7 @@ Typer_app::Typer_app() {
     });
 
     typing_stack.main_window.typer_widget.key_pressed.connect([this](char c) {
-        bool correct{logic_.validate_next_letter(c)};
+        bool correct{engine_.commit_keystroke(c)};
         this->update_stats_box();
         return correct;
     });
@@ -54,19 +54,19 @@ Typer_app::Typer_app() {
 
 void Typer_app::reset_main_window() {
     std::string new_text{typing_stack.set_text_widget.textbox.contents().str()};
-    this->set_text_in_logic_and_typer_display(new_text);
+    this->set_text_in_engine_and_typer_display(new_text);
     typing_stack.main_window.typer_widget.set_cursor(0);
     cppurses::Focus::set_focus_to(&typing_stack.main_window.typer_widget);
 }
 
-void Typer_app::set_text_in_logic_and_typer_display(const std::string& text) {
-    logic_.set_text(text);
+void Typer_app::set_text_in_engine_and_typer_display(const std::string& text) {
+    engine_.set_text(text);
     typing_stack.main_window.typer_widget.set_text("");  // hack to scroll up
     typing_stack.main_window.typer_widget.set_text(text);
 }
 
 void Typer_app::update_stats_box() {
-    Typer_logic::Stats stats{logic_.get_stats()};
+    Typing_test_engine::Stats stats{engine_.get_stats()};
     std::stringstream ss;
     // WPM
     ss << stats.wpm;
@@ -75,18 +75,18 @@ void Typer_app::update_stats_box() {
 
     // Missed
     ss.str("");
-    ss << stats.missed;
+    ss << stats.missed_keystrokes;
     std::string missed{ss.str()};
     top_bar.stats_box.missed_stat.value.set_text(missed);
 
     // Accuracy
     ss.str("");
-    double percentage{
-        (static_cast<double>(stats.total - stats.missed) / stats.total) * 100};
-    if (stats.total == 0) {
-        percentage = 0;
+    double percent{0.0};
+    if (stats.correct_keystrokes != 0) {
+        percent = (static_cast<double>(stats.correct_keystrokes) * 100) /
+                  (stats.correct_keystrokes + stats.missed_keystrokes);
     }
-    ss << std::fixed << std::setprecision(1) << percentage << '%';
+    ss << std::fixed << std::setprecision(1) << percent << '%';
     std::string accuracy{ss.str()};
     top_bar.stats_box.accuracy_stat.value.set_text(accuracy);
 }

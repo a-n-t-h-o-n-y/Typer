@@ -1,6 +1,6 @@
 # Typer Library
 add_library(typer_lib
-    typer_logic.cpp
+    typing_test_engine.cpp
     typer_app.cpp
     top_bar.cpp
     stats_box.cpp
