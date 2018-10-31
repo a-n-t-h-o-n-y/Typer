@@ -35,11 +35,13 @@ class Typer_logic {
     /// Retrieve the text starting from the current index.
     std::string get_text_from_current_index() const;
 
-    /// Return a Stats object(wpm, missed, total
+    /// Return a Stats object(wpm, missed, total)
     Stats get_stats() const;
 
     /// Set the average length of a word in chars.
     void set_word_length(int length);
+
+    /// Retrieve the set average length of a word.
     int get_word_length() const;
 
    private:

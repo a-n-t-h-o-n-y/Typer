@@ -12,7 +12,7 @@ add_library(typer_lib
 target_compile_features(typer_lib PUBLIC cxx_std_14)
 target_compile_options(typer_lib PUBLIC -Wall)
 target_include_directories(typer_lib PUBLIC ${PROJECT_SOURCE_DIR}/include)
-target_link_libraries(typer_lib /usr/local/lib64/liblibcppurses.a ncurses)
+target_link_libraries(typer_lib /usr/local/lib64/libcppurses.a ncurses pthread)
 
 # CLANG TIDY
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -

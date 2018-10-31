@@ -14,12 +14,13 @@ Typer_widget::Typer_widget() {
     this->border.east_enabled = true;
 }
 
-bool Typer_widget::key_press_event(cppurses::Key key, char symbol) {
-    if (key == cppurses::Key::Enter) {
+bool Typer_widget::key_press_event(const cppurses::Keyboard_data& keyboard) {
+    char symbol = keyboard.symbol;
+    if (keyboard.key == cppurses::Key::Enter) {
         symbol = '\n';
     }
     if (!(std::isprint(symbol) || std::isspace(symbol))) {
-        return Widget::key_press_event(key, symbol);
+        return Widget::key_press_event(keyboard);
     }
     auto key_valid{key_pressed(symbol)};
     if (key_valid && *key_valid) {
@@ -36,7 +37,7 @@ bool Typer_widget::key_press_event(cppurses::Key key, char symbol) {
             .brush.set_foreground(cppurses::Color::Red);
     }
     this->Widget::update();
-    return Widget::key_press_event(key, symbol);
+    return Widget::key_press_event(keyboard);
 }
 
 void Typer_widget::scroll_down(std::size_t n) {

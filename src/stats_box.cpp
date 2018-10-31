@@ -3,6 +3,8 @@
 #include <algorithm>
 #include <cstddef>
 
+#include <cppurses/widget/widget_free_functions.hpp>
+
 namespace typer {
 namespace ui {
 
