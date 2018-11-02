@@ -11,7 +11,6 @@ namespace ui {
 
 struct Stat : cppurses::Horizontal_layout {
     Stat(const std::string& value_, const std::string& label_);
-
     cppurses::Text_display& value;
     cppurses::Label& label;
     cppurses::Widget& space{this->make_child<cppurses::Widget>()};
@@ -19,7 +18,6 @@ struct Stat : cppurses::Horizontal_layout {
 
 struct Stats_box : cppurses::Horizontal_layout {
     Stats_box();
-
     Stat& wpm_stat{this->make_child<Stat>("0", " WPM")};
     Stat& missed_stat{this->make_child<Stat>("0", " Missed")};
     Stat& accuracy_stat{this->make_child<Stat>("--.--%", "")};

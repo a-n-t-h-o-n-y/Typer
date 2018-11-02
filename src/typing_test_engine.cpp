@@ -61,14 +61,15 @@ void Typing_test_engine::update_state(bool was_accepted) {
 void Typing_test_engine::update_wpm() {
     using Minute_dbl_t = std::chrono::duration<double, std::ratio<60>>;
     using std::chrono::duration_cast;
+
     if (stats_.correct_keystrokes + stats_.missed_keystrokes == 1) {
         initial_time_ = Clock_t::now();
         return;
     }
     const double word_count{static_cast<double>(stats_.correct_keystrokes) /
                             word_length_};
-    const Clock_t::duration time_elapsed_ = Clock_t::now() - initial_time_;
-    const double minutes = duration_cast<Minute_dbl_t>(time_elapsed_).count();
+    const Clock_t::duration time_elapsed_{Clock_t::now() - initial_time_};
+    const double minutes{duration_cast<Minute_dbl_t>(time_elapsed_).count()};
     stats_.wpm = static_cast<int>(std::round(word_count / minutes));
 }
 

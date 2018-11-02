@@ -11,19 +11,16 @@ namespace ui {
 
 struct Text_modify_bar : cppurses::Horizontal_layout {
     Text_modify_bar();
-
     cppurses::Push_button& clear_btn{
         this->make_child<cppurses::Push_button>("Clear Text")};
-    cppurses::Push_button& remove_newlines_btn{
-        this->make_child<cppurses::Push_button>("Remove Newlines")};
-    cppurses::Push_button& remove_extra_space_btn{
-        this->make_child<cppurses::Push_button>("Remove Extra Space")};
+    cppurses::Push_button& tidy_btn{
+        this->make_child<cppurses::Push_button>("Tidy")};
 };
 
 struct Set_text_widget : cppurses::Vertical_layout {
     Set_text_widget();
-
-    cppurses::Textbox& textbox{this->make_child<cppurses::Textbox>("Set Text")};
+    cppurses::Textbox& textbox{
+        this->make_child<cppurses::Textbox>("Place Text Here")};
     Text_modify_bar& modify_bar{this->make_child<Text_modify_bar>()};
 };
 

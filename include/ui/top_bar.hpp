@@ -10,7 +10,6 @@ namespace ui {
 
 struct Top_bar : cppurses::Horizontal_layout {
     Top_bar();
-
     Stats_box& stats_box{this->make_child<Stats_box>()};
     cppurses::Push_button& set_text_btn{
         this->make_child<cppurses::Push_button>("Set Text")};

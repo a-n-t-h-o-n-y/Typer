@@ -20,9 +20,9 @@ struct Typer_app : public cppurses::Vertical_layout {
    private:
     Typing_test_engine engine_;
 
-    void set_text_in_engine_and_typer_display(const std::string& text);
     void update_stats_box();
-    void reset_main_window();
+    void init_typing_window();
+    auto setup_next_chunk();
 };
 
 }  // namespace ui

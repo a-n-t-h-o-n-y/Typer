@@ -1,5 +1,6 @@
 #ifndef TYPER_UI_TYPER_WIDGET_HPP
 #define TYPER_UI_TYPER_WIDGET_HPP
+#include <cppurses/painter/color.hpp>
 #include <cppurses/system/keyboard_data.hpp>
 #include <cppurses/widget/layouts/vertical_layout.hpp>
 #include <cppurses/widget/widgets/blank_height.hpp>
@@ -19,14 +20,22 @@ struct Typer_widget : cppurses::Textbox_base {
     /// Override scroll down function to scroll height amount instead of one.
     void scroll_down(std::size_t n = 1) override;
 
+    /// Filters text before sending onto cppurses::Text_display::set_text().
+    void set_text(cppurses::Glyph_string text);
+
     // Signals
     sig::Signal<bool(char)> key_pressed;
 
+    static const wchar_t carriage_return;
+
    private:
-    bool last_missed_{false};
+    using cppurses::Text_display::set_text;
+    static const cppurses::Color correct_color{cppurses::Color::Light_gray};
+    static const cppurses::Color incorrect_color{cppurses::Color::Red};
+    void color_cursor_glyph(bool is_correct_key);
 };
 
-struct Main_window : cppurses::Vertical_layout {
+struct Typing_window : cppurses::Vertical_layout {
     cppurses::Blank_height& space_1{
         this->make_child<cppurses::Blank_height>(1)};
     Typer_widget& typer_widget{this->make_child<Typer_widget>()};
