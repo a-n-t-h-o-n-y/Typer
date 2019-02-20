@@ -1,6 +1,6 @@
 #ifndef TYPER_UI_TYPING_STACK_HPP
 #define TYPER_UI_TYPING_STACK_HPP
-#include <cppurses/widget/widgets/widget_stack.hpp>
+#include <cppurses/widget/layouts/stack.hpp>
 
 #include <cstddef>
 
@@ -10,8 +10,9 @@
 namespace typer {
 namespace ui {
 
-struct Typing_stack : cppurses::Widget_stack {
+struct Typing_stack : cppurses::layout::Stack {
     Typing_stack();
+
     Typing_window& typing_window{this->make_page<Typing_window>()};
     Set_text_widget& set_text_widget{this->make_page<Set_text_widget>()};
 

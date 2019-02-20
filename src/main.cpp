@@ -1,20 +1,23 @@
-#include <cppurses/cppurses.hpp>
+#include <cppurses/painter/color.hpp>
+#include <cppurses/system/system.hpp>
+#include <cppurses/widget/widgets/titlebar.hpp>
 
 #include <ui/typer_app.hpp>
 
-struct App : cppurses::Vertical_layout {
+using namespace cppurses;
+
+struct App : layout::Vertical {
     App() {
-        set_background_recursive(titlebar, cppurses::Color::Black);
-        set_foreground_recursive(titlebar, cppurses::Color::White);
+        for (const auto& child : titlebar.children.get()) {
+            child->brush.set_background(Color::Black);
+            child->brush.set_foreground(Color::White);
+        }
     }
-    cppurses::Titlebar& titlebar{
-        this->make_child<cppurses::Titlebar>("~T-y-p-e-r~")};
+    Titlebar& titlebar{this->make_child<Titlebar>("~T-y-p-e-r~")};
     typer::ui::Typer_app& app{this->make_child<typer::ui::Typer_app>()};
 };
 
 int main() {
-    cppurses::System sys;
-    App app;
-    sys.set_head(&app);
-    return sys.run();
+    System sys;
+    return sys.run<App>();
 }

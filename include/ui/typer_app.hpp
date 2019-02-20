@@ -2,7 +2,7 @@
 #define TYPER_UI_TYPER_APP_HPP
 #include <string>
 
-#include <cppurses/widget/layouts/vertical_layout.hpp>
+#include <cppurses/widget/layouts/vertical.hpp>
 
 #include <typing_test_engine.hpp>
 #include <ui/top_bar.hpp>
@@ -11,7 +11,7 @@
 namespace typer {
 namespace ui {
 
-struct Typer_app : public cppurses::Vertical_layout {
+struct Typer_app : public cppurses::layout::Vertical {
     Typer_app();
 
     Top_bar& top_bar{this->make_child<Top_bar>()};

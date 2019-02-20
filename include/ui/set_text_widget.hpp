@@ -1,7 +1,7 @@
 #ifndef TYPER_UI_SET_TEXT_WIDGET_HPP
 #define TYPER_UI_SET_TEXT_WIDGET_HPP
-#include <cppurses/widget/layouts/horizontal_layout.hpp>
-#include <cppurses/widget/layouts/vertical_layout.hpp>
+#include <cppurses/widget/layouts/horizontal.hpp>
+#include <cppurses/widget/layouts/vertical.hpp>
 #include <cppurses/widget/widgets/open_file.hpp>
 #include <cppurses/widget/widgets/push_button.hpp>
 #include <cppurses/widget/widgets/textbox.hpp>
@@ -9,7 +9,7 @@
 namespace typer {
 namespace ui {
 
-struct Text_modify_bar : cppurses::Horizontal_layout {
+struct Text_modify_bar : cppurses::layout::Horizontal {
     Text_modify_bar();
     cppurses::Push_button& clear_btn{
         this->make_child<cppurses::Push_button>("Clear Text")};
@@ -17,7 +17,7 @@ struct Text_modify_bar : cppurses::Horizontal_layout {
         this->make_child<cppurses::Push_button>("Tidy")};
 };
 
-struct Set_text_widget : cppurses::Vertical_layout {
+struct Set_text_widget : cppurses::layout::Vertical {
     Set_text_widget();
     cppurses::Textbox& textbox{
         this->make_child<cppurses::Textbox>("Place Text Here")};

@@ -2,23 +2,18 @@
 
 #include <cppurses/painter/color.hpp>
 #include <cppurses/widget/size_policy.hpp>
-#include <cppurses/widget/widget_free_functions.hpp>
+
+using namespace cppurses;
 
 namespace typer {
 namespace ui {
 
 Top_bar::Top_bar() {
-    using namespace cppurses;
-    this->height_policy.type(Size_policy::Fixed);
-    this->height_policy.hint(1);
-
+    this->height_policy.fixed(1);
     stats_box.width_policy.type(Size_policy::Expanding);
-
-    set_background(set_text_btn, Color::Light_green);
-    set_foreground(set_text_btn, Color::Black);
-    set_text_btn.width_policy.type(Size_policy::Preferred);
-    set_text_btn.width_policy.hint(10);
+    set_text_btn.width_policy.preferred(10);
+    set_text_btn.brush.set_background(Color::Light_green);
+    set_text_btn.brush.set_foreground(Color::Black);
 }
-
 }  // namespace ui
 }  // namespace typer

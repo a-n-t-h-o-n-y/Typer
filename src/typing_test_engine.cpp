@@ -31,7 +31,8 @@ void Typing_test_engine::reset() {
 }
 
 bool Typing_test_engine::is_complete() const {
-    return stats_.correct_keystrokes >= text_body_.size();
+    return static_cast<std::size_t>(stats_.correct_keystrokes) >=
+           text_body_.size();
 }
 
 Typing_test_engine::Stats Typing_test_engine::get_stats() const {
@@ -80,5 +81,4 @@ void Typing_test_engine::update_keystroke_counts(bool was_accepted) {
         ++stats_.missed_keystrokes;
     }
 }
-
 }  // namespace typer

@@ -7,7 +7,11 @@
 #include <sstream>
 #include <string>
 
+#include <cppurses/painter/glyph_string.hpp>
+
 #include <ui/typing_stack.hpp>
+
+using namespace cppurses;
 
 namespace {
 using namespace typer::ui;
@@ -21,12 +25,11 @@ auto toggle_active_page(Typing_stack& stack) {
     };
 }
 
-cppurses::Glyph_string glyph_substring(const cppurses::Glyph_string& gs,
-                                       std::size_t index) {
-    cppurses::Glyph_string substr;
+Glyph_string glyph_substring(const Glyph_string& gs, std::size_t index) {
+    Glyph_string substr;
     if (index < gs.size()) {
         auto begin = std::begin(gs) + index;
-        substr = cppurses::Glyph_string{begin, std::end(gs)};
+        substr = Glyph_string{begin, std::end(gs)};
     }
     return substr;
 }
@@ -42,9 +45,9 @@ namespace typer {
 namespace ui {
 
 auto Typer_app::setup_next_chunk() {
-    return [this]() {
+    return [this](auto) {
         Typer_widget& typer_widget = typing_stack.typing_window.typer_widget;
-        std::size_t top_left{typer_widget.index_at(0, 0)};
+        std::size_t top_left{typer_widget.index_at({0, 0})};
         auto new_chunk = glyph_substring(typer_widget.contents(), top_left);
         remove_and_erase(new_chunk, Typer_widget::carriage_return);
         engine_.set_text(new_chunk.str());
@@ -58,7 +61,8 @@ Typer_app::Typer_app() {
     top_bar.set_text_btn.clicked.connect(toggle_active_page(typing_stack));
 
     // Typer Widget Scrolled
-    typer_widget.scrolled.connect(setup_next_chunk());
+    typer_widget.scrolled_up.connect(setup_next_chunk());
+    typer_widget.scrolled_down.connect(setup_next_chunk());
 
     // Key Pressed
     typer_widget.key_pressed.connect([this](char c) {
@@ -79,7 +83,7 @@ Typer_app::Typer_app() {
         [this](std::ifstream& ifs) {
             std::string contents{std::istreambuf_iterator<char>(ifs),
                                  std::istreambuf_iterator<char>()};
-            typing_stack.set_text_widget.textbox.set_text(contents);
+            typing_stack.set_text_widget.textbox.set_contents(contents);
             this->init_typing_window();
         });
 }
@@ -87,7 +91,7 @@ Typer_app::Typer_app() {
 void Typer_app::init_typing_window() {
     std::string new_text{typing_stack.set_text_widget.textbox.contents().str()};
     engine_.set_text(new_text);
-    typing_stack.typing_window.typer_widget.set_text(new_text);
+    typing_stack.typing_window.typer_widget.set_contents(new_text);
 }
 
 void Typer_app::update_stats_box() {
@@ -96,12 +100,12 @@ void Typer_app::update_stats_box() {
 
     // WPM
     ss << stats.wpm;
-    top_bar.stats_box.wpm_stat.value.set_text(ss.str());
+    top_bar.stats_box.wpm_stat.value.set_contents(ss.str());
 
     // Missed
     ss.str("");
     ss << stats.missed_keystrokes;
-    top_bar.stats_box.missed_stat.value.set_text(ss.str());
+    top_bar.stats_box.missed_stat.value.set_contents(ss.str());
 
     // Accuracy
     ss.str("");
@@ -111,8 +115,7 @@ void Typer_app::update_stats_box() {
                   (stats.correct_keystrokes + stats.missed_keystrokes);
     }
     ss << std::fixed << std::setprecision(1) << percent << '%';
-    top_bar.stats_box.accuracy_stat.value.set_text(ss.str());
+    top_bar.stats_box.accuracy_stat.value.set_contents(ss.str());
 }
-
 }  // namespace ui
 }  // namespace typer

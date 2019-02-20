@@ -1,12 +1,12 @@
 # Tests
-add_executable(tests EXCLUDE_FROM_ALL 
+add_executable(typer_tests EXCLUDE_FROM_ALL 
     tests_main.cpp
     typing_test_engine_test.cpp
-    )
+    ../src/typing_test_engine.cpp
+)
 
-target_compile_features(tests PUBLIC cxx_std_14)
-target_compile_options(tests PUBLIC -Wall)
-target_include_directories(tests PRIVATE "${PROJECT_SOURCE_DIR}/include")
-target_link_libraries(tests typer_lib)
+target_compile_features(typer_tests PUBLIC cxx_std_14)
+target_compile_options(typer_tests PUBLIC -Wall -Wextra)
+target_include_directories(typer_tests PRIVATE "${PROJECT_SOURCE_DIR}/include")
 
-add_test(logic_typer tests)
+add_test(NAME typer_logic COMMAND typer_tests)
