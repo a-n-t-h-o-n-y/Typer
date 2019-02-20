@@ -9,10 +9,13 @@ add_executable(typer
     typing_stack.cpp
 )
 
-target_compile_features(typer PUBLIC cxx_std_14)
-target_compile_options(typer PUBLIC -Wall -Wextra)
-target_include_directories(typer PUBLIC ${PROJECT_SOURCE_DIR}/include)
-target_link_libraries(typer cppurses)
+target_compile_features(typer PRIVATE cxx_std_14)
+target_compile_options(typer PRIVATE -Wall -Wextra)
+target_include_directories(typer PRIVATE ${PROJECT_SOURCE_DIR}/include)
+target_link_libraries(typer PRIVATE cppurses)
+
+# Install
+install(TARGETS typer RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR})
 
 # CLANG TIDY
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -

@@ -6,7 +6,3 @@ enable_testing()
 add_subdirectory(external/CPPurses)
 add_subdirectory(src)
 add_subdirectory(tests)
-
-# Install
-install(TARGETS typer
-    RUNTIME  DESTINATION ${CMAKE_INSTALL_BINDIR})
