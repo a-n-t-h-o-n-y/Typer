@@ -1,7 +1,5 @@
-*.a
-*.o
-*.so
 notes/
 build*/
 compile_commands.json
 tags
+.clangd/
