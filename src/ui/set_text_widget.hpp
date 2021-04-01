@@ -3,26 +3,20 @@
 #include <algorithm>
 #include <iterator>
 
-#include <cppurses/painter/color.hpp>
-#include <cppurses/widget/layouts/horizontal.hpp>
-#include <cppurses/widget/layouts/vertical.hpp>
-#include <cppurses/widget/pipe.hpp>
-#include <cppurses/widget/widgets/button.hpp>
-#include <cppurses/widget/widgets/open_file.hpp>
-#include <cppurses/widget/widgets/textbox.hpp>
+#include <termox/termox.hpp>
 
 namespace typer::ui {
 
-class Text_modify_bar : public cppurses::layout::Horizontal<cppurses::Button> {
+class Text_modify_bar : public ox::layout::Horizontal<ox::Button> {
    public:
-    cppurses::Button& clear_btn = this->make_child("Clear Text");
-    cppurses::Button& tidy_btn  = this->make_child("Tidy");
+    ox::Button& clear_btn = this->make_child("Clear Text");
+    ox::Button& tidy_btn  = this->make_child("Tidy");
 
    public:
     Text_modify_bar()
     {
-        using namespace cppurses::pipe;
-        using cppurses::Color;
+        using namespace ox::pipe;
+        using ox::Color;
 
         *this | fixed_height(1);
         clear_btn | preferred_width(10) | bg(Color::White) | fg(Color::Black);
@@ -30,10 +24,9 @@ class Text_modify_bar : public cppurses::layout::Horizontal<cppurses::Button> {
     }
 };
 
-struct Set_text_widget : cppurses::layout::Vertical<> {
+struct Set_text_widget : ox::layout::Vertical<> {
    public:
-    cppurses::Textbox& textbox =
-        this->make_child<cppurses::Textbox>("Place Text Here");
+    ox::Textbox& textbox = this->make_child<ox::Textbox>("Place Text Here");
     Text_modify_bar& modify_bar = this->make_child<Text_modify_bar>();
 
    private:
@@ -48,11 +41,13 @@ struct Set_text_widget : cppurses::layout::Vertical<> {
         c.erase(new_end, std::end(c));
     }
 
-    static auto tidy_text(cppurses::Textbox& tb)
+    /// Turn newlines into spaces, ’ -> '
+    static auto tidy_text(ox::Textbox& tb)
     {
         return [&tb]() {
             auto text = tb.contents();
-            std::replace(std::begin(text), std::end(text), L'\n', L' ');
+            std::replace(std::begin(text), std::end(text), U'\n', U' ');
+            std::replace(std::begin(text), std::end(text), U'’', U'\'');
             remove_adjacent_spaces(text);
             tb.set_contents(text);
         };
@@ -61,8 +56,8 @@ struct Set_text_widget : cppurses::layout::Vertical<> {
    public:
     Set_text_widget()
     {
-        using namespace cppurses::pipe;
-        textbox | bg(cppurses::Color::Dark_gray);
+        using namespace ox::pipe;
+        textbox | bg(ox::Color::Dark_gray);
         modify_bar.clear_btn | on_press([this]() { textbox.clear(); });
         modify_bar.tidy_btn | on_press(tidy_text(textbox));
     }

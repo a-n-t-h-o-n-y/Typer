@@ -8,12 +8,9 @@
 #include <string>
 #include <utility>
 
-#include <cppurses/painter/glyph_string.hpp>
-#include <cppurses/widget/pipe.hpp>
+#include <termox/termox.hpp>
 
 #include "typing_stack.hpp"
-
-using namespace cppurses;
 
 namespace {
 
@@ -36,7 +33,7 @@ namespace typer::ui {
 
 Typer_app::Typer_app()
 {
-    using namespace cppurses::pipe;
+    using namespace ox::pipe;
 
     auto& typer_widget = typing_stack.typing_window.typer_widget;
 

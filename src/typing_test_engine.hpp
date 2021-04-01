@@ -15,9 +15,9 @@ class Typing_test_engine {
    public:
     /// Holds live statistics of the current typing test run.
     struct Stats {
-        std::size_t wpm{0};
-        std::size_t missed_keystrokes{0};
-        std::size_t correct_keystrokes{0};
+        std::size_t wpm                = 0;
+        std::size_t missed_keystrokes  = 0;
+        std::size_t correct_keystrokes = 0;
     };
 
    public:
@@ -73,7 +73,7 @@ class Typing_test_engine {
     using Clock_t = std::chrono::steady_clock;
 
     std::string text_body_;
-    std::size_t word_length_{5uL};
+    std::size_t word_length_ = 5;
     Stats stats_;
     Clock_t::time_point initial_time_;
 

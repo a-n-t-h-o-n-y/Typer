@@ -6,7 +6,7 @@ add_executable(typer
 
 target_compile_features(typer PRIVATE cxx_std_17)
 target_compile_options(typer PRIVATE -Wall -Wextra)
-target_link_libraries(typer PRIVATE cppurses)
+target_link_libraries(typer PRIVATE TermOx)
 
 # Install
 install(TARGETS typer RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR})

@@ -1,15 +1,15 @@
 #ifndef TYPER_UI_TYPING_STACK_HPP
 #define TYPER_UI_TYPING_STACK_HPP
-#include <cppurses/widget/layouts/stack.hpp>
-
 #include <cstddef>
+
+#include <termox/termox.hpp>
 
 #include "set_text_widget.hpp"
 #include "typer_widget.hpp"
 
 namespace typer::ui {
 
-class Typing_stack : public cppurses::layout::Stack<> {
+class Typing_stack : public ox::layout::Stack<> {
    public:
     Typing_window& typing_window     = this->make_page<Typing_window>();
     Set_text_widget& set_text_widget = this->make_page<Set_text_widget>();

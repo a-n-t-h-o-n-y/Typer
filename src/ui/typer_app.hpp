@@ -4,8 +4,7 @@
 #include <iterator>
 #include <string>
 
-#include <cppurses/painter/glyph_string.hpp>
-#include <cppurses/widget/layouts/vertical.hpp>
+#include <termox/termox.hpp>
 
 #include "../typing_test_engine.hpp"
 #include "top_bar.hpp"
@@ -13,7 +12,7 @@
 
 namespace typer::ui {
 
-class Typer_app : public cppurses::layout::Vertical<> {
+class Typer_app : public ox::layout::Vertical<> {
    public:
     Top_bar& top_bar           = this->make_child<Top_bar>();
     Typing_stack& typing_stack = this->make_child<Typing_stack>();
@@ -36,10 +35,10 @@ class Typer_app : public cppurses::layout::Vertical<> {
     }
 
     /// Create a substring from index to end of the passed in Glyph_string.
-    static auto glyph_substring(cppurses::Glyph_string const& gs,
-                                std::size_t index) -> cppurses::Glyph_string
+    static auto glyph_substring(ox::Glyph_string const& gs, int index)
+        -> ox::Glyph_string
     {
-        using cppurses::Glyph_string;
+        using ox::Glyph_string;
         auto substr = Glyph_string{};
         if (index < gs.size()) {
             auto begin = std::begin(gs) + index;

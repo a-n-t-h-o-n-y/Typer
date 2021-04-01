@@ -2,49 +2,42 @@
 #define TYPER_UI_TYPER_WIDGET_HPP
 #include <cstddef>
 
-#include <cppurses/painter/color.hpp>
-#include <cppurses/system/events/key.hpp>
-#include <cppurses/widget/layouts/vertical.hpp>
-#include <cppurses/widget/widgets/detail/textbox_base.hpp>
-#include <cppurses/widget/widgets/fixed_height.hpp>
-#include <cppurses/widget/widgets/open_file.hpp>
-
-#include <signals/signal.hpp>
+#include <termox/termox.hpp>
 
 namespace typer::ui {
 
-class Typer_widget : public cppurses::detail::Textbox_base {
+class Typer_widget : public ox::detail::Textbox_base {
    public:
     Typer_widget()
     {
-        using namespace cppurses::pipe;
+        using namespace ox::pipe;
         *this | east_west_border() | strong_focus();
     }
 
     /// Override scroll down function to scroll height amount instead of one.
-    void scroll_down(std::size_t) override
+    void scroll_down(int) override
     {
         this->Textbox_base::scroll_down(this->Widget::height());
     }
 
-    /// Filters text before sending onto cppurses::Text_display::set_contents().
-    void set_contents(cppurses::Glyph_string text);
+    /// Filters text before sending onto ox::Text_display::set_contents().
+    void set_contents(ox::Glyph_string text);
 
    public:
-    sig::Signal<bool(char)> key_pressed;
+    sl::Signal<bool(char)> key_pressed;
 
-    inline static wchar_t const carriage_return = L'↵';
+    static constexpr auto carriage_return = U'↵';
 
    protected:
     /// Override keyboard input to move cursor.
-    auto key_press_event(cppurses::Key::State const& keyboard) -> bool override;
+    auto key_press_event(ox::Key key) -> bool override;
 
    private:
-    using cppurses::Text_display::set_contents;
+    using ox::Text_display::set_contents;
 
    private:
-    inline static auto const correct_color   = cppurses::Color::Light_gray;
-    inline static auto const incorrect_color = cppurses::Color::Red;
+    inline static auto const correct_color   = ox::Color::Light_gray;
+    inline static auto const incorrect_color = ox::Color::Red;
 
    private:
     /// Set the foreground color of the Glyph under the cursor based on whether
@@ -64,32 +57,38 @@ class Typer_widget : public cppurses::detail::Textbox_base {
     }
 
     /// Return true if the glyph under the cursor has foreground color \p c.
-    auto cursor_glyph_is(cppurses::Color c) -> bool
+    auto cursor_glyph_is(ox::Color c) -> bool
     {
         auto const color =
-            this->contents()[this->cursor_index()].brush.foreground_color();
-        return color ? *color == c : false;
+            this->contents()[this->cursor_index()].brush.foreground;
+        return color == c;
     }
 
     /// Set the foreground color to \p c of the glyph under the cursor.
-    void set_cursor_glyph_color(cppurses::Color c)
+    void set_cursor_glyph_color(ox::Color c)
     {
-        this->contents()[this->cursor_index()].brush.set_foreground(c);
+        this->contents()[this->cursor_index()].brush.foreground = c;
+        this->update();
     }
 };
 
-class Typing_window : public cppurses::layout::Vertical<> {
+class Typing_window : public ox::layout::Vertical<> {
    public:
-    cppurses::Fixed_height& space_1 =
-        this->make_child<cppurses::Fixed_height>(1);
+    ox::Widget& space_1 = this->make_child();
 
     Typer_widget& typer_widget = this->make_child<Typer_widget>();
 
-    cppurses::Fixed_height& space_2 =
-        this->make_child<cppurses::Fixed_height>(1);
+    ox::Widget& space_2 = this->make_child();
 
-    cppurses::Open_file<>& load_file =
-        this->make_child<cppurses::Open_file<>>();
+    ox::Open_file<>& load_file = this->make_child<ox::Open_file<>>();
+
+   public:
+    Typing_window()
+    {
+        using namespace ox::pipe;
+        space_1 | fixed_height(1);
+        space_2 | fixed_height(1);
+    }
 };
 
 }  // namespace typer::ui

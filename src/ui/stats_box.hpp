@@ -3,46 +3,40 @@
 #include <algorithm>
 #include <string>
 
-#include <cppurses/painter/color.hpp>
-#include <cppurses/widget/layouts/horizontal.hpp>
-#include <cppurses/widget/pipe.hpp>
-#include <cppurses/widget/widgets/label.hpp>
-#include <cppurses/widget/widgets/text_display.hpp>
+#include <termox/termox.hpp>
 
 namespace typer::ui {
 
-class Stat : public cppurses::layout::Horizontal<> {
+class Stat : public ox::Passive<ox::HPair<ox::Text_display, ox::HLabel>> {
    public:
-    cppurses::Text_display& value;
-    cppurses::Label& label;
-    cppurses::Widget& space = this->make_child<cppurses::Widget>();
+    ox::Text_display& value = this->first;
+    ox::HLabel& label       = this->second;
 
    public:
-    Stat(std::string const& value_, std::string const& label_)
-        : value{this->make_child<cppurses::Text_display>(value_)},
-          label{this->make_child<cppurses::Label>(label_)}
+    Stat(std::string const& initial_value, std::string const& label_text)
     {
-        using namespace cppurses::pipe;
-        value | align_right() | preferred_width(std::max(3uL, value_.length()));
-        label | preferred_width(label_.length() + 1uL) | word_wrap(false);
-        space | expanding_width(0);
+        using namespace ox::pipe;
+
+        value | contents(initial_value) | align_right() |
+            fixed_width(std::max(3uL, initial_value.length()));
+
+        label | dynamic_growth() | text(label_text + " ");
     }
 };
 
-class Stats_box : public cppurses::layout::Horizontal<Stat> {
+class Stats_box : public ox::layout::Horizontal<> {
    public:
-    Stat& wpm_stat      = this->make_child("0", " WPM");
-    Stat& missed_stat   = this->make_child("0", " Missed");
-    Stat& accuracy_stat = this->make_child("--.--%", "");
+    Stat& wpm_stat      = this->make_child<Stat>("0", " WPM");
+    ox::Widget& buf_1   = this->make_child();
+    Stat& missed_stat   = this->make_child<Stat>("0", " Missed");
+    ox::Widget& buf_2   = this->make_child();
+    Stat& accuracy_stat = this->make_child<Stat>("--.--%", "");
 
    public:
     Stats_box()
     {
-        using namespace cppurses::pipe;
-        using cppurses::Color;
-
-        *this | descendants() | bg(Color::White) | fg(Color::Black);
-        accuracy_stat.space | fixed_width(0);
+        using namespace ox::pipe;
+        *this | descendants() | bg(ox::Color::White) | fg(ox::Color::Black);
     }
 };
 
