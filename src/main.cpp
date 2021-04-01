@@ -1,23 +1,18 @@
-#include <cppurses/painter/color.hpp>
-#include <cppurses/system/system.hpp>
-#include <cppurses/widget/pipe.hpp>
-#include <cppurses/widget/widgets/titlebar.hpp>
+#include <termox/termox.hpp>
 
 #include "ui/typer_app.hpp"
 
-using namespace cppurses;
-
-class App : public layout::Vertical<> {
+class App : public ox::VPair<ox::Titlebar, typer::ui::Typer_app> {
    public:
-    Titlebar& titlebar        = this->make_child<Titlebar>("~T-y-p-e-r~");
-    typer::ui::Typer_app& app = this->make_child<typer::ui::Typer_app>();
+    ox::Titlebar& titlebar = this->first;
 
    public:
     App()
     {
-        using namespace cppurses::pipe;
-        titlebar | children() | fg(Color::White) | bg(Color::Black);
+        using namespace ox::pipe;
+        titlebar | children() | fg(ox::Color::White) | bg(ox::Color::Black);
+        titlebar.title.set_text(U"~T-y-p-e-r~");
     }
 };
 
-int main() { return System{}.run<App>(); }
+int main() { return ox::System{}.run<App>(); }
