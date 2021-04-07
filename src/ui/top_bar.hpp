@@ -6,27 +6,16 @@
 
 namespace typer::ui {
 
-struct Set_text_btn : ox::Button {
-    Set_text_btn() : ox::Button{U"Set Text"}
+struct Set_text_btn : ox::Fixed_width<10, ox::Button> {
+    Set_text_btn() : Fixed_width{U"Set Text"}
     {
-        using namespace ox::pipe;
-        using ox::Color;
-        *this | preferred_width(10) | bg(Color::Light_green) | fg(Color::Black);
+        *this | bg(ox::Color::Light_green) | fg(ox::Color::Black);
     }
 };
 
-class Top_bar : public ox::HPair<Stats_box, Set_text_btn> {
-   public:
+struct Top_bar : ox::Fixed_height<1, ox::HPair<Stats_box, Set_text_btn>> {
     Stats_box& stats_box       = this->first;
     Set_text_btn& set_text_btn = this->second;
-
-   public:
-    Top_bar()
-    {
-        using namespace ox::pipe;
-        *this | fixed_height(1);
-        stats_box | expanding_width(0);
-    }
 };
 
 }  // namespace typer::ui

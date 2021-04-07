@@ -2,17 +2,19 @@
 
 #include "ui/typer_app.hpp"
 
-class App : public ox::VPair<ox::Titlebar, typer::ui::Typer_app> {
-   public:
-    ox::Titlebar& titlebar = this->first;
+using namespace ox;
 
-   public:
-    App()
+namespace {
+
+struct Title : Titlebar {
+    Title() : Titlebar{U"~T-y-p-e-r~"}
     {
-        using namespace ox::pipe;
-        titlebar | children() | fg(ox::Color::White) | bg(ox::Color::Black);
-        titlebar.title.set_text(U"~T-y-p-e-r~");
+        *this | pipe::children() | fg(Color::White) | bg(Color::Black);
     }
 };
 
-int main() { return ox::System{}.run<App>(); }
+using App = VPair<Title, typer::ui::Typer_app>;
+
+}  // namespace
+
+int main() { return System{}.run<App>(); }

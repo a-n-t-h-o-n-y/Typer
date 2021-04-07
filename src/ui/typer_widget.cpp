@@ -25,26 +25,11 @@ void insert_before_each(Container_t& container,
 
 namespace typer::ui {
 
-auto Typer_widget::key_press_event(ox::Key key) -> bool
+void Carriage_textbox::set_contents(ox::Glyph_string text)
 {
-    using ox::Key;
-    if (!this->cursor_is_over_text())
-        return Widget::key_press_event(key);
-    auto const c              = key == Key::Enter ? '\n' : key_to_char(key);
-    auto const is_correct_key = key_pressed(c).value_or(false);
-    color_cursor_glyph(is_correct_key);
-    if (is_correct_key)
-        this->Textbox_base::cursor_right(c == '\n' ? 2 : 1);
-    this->update();
-    return Widget::key_press_event(key);
-}
-
-void Typer_widget::set_contents(ox::Glyph_string text)
-{
-    using namespace ox;
-    insert_before_each(text, carriage_return, U'\n');
-    this->Text_display::set_contents(text);
-    System::set_focus(*this);
+    original_contents_ = text.u32str();
+    insert_before_each(text, CR, U'\n');
+    Textbox_base::set_contents(std::move(text));
 }
 
 }  // namespace typer::ui

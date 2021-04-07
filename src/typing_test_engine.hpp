@@ -4,125 +4,110 @@
 #include <chrono>
 #include <cmath>
 #include <cstddef>
+#include <optional>
 #include <ratio>
 #include <string>
+#include <utility>
 
 namespace typer {
 
-/// Responsible for holding a body of text to be typed through, validating each
-/// keystroke and updating statistics.
+/// Responsible for holding a body of text to be typed through.
+/** Validates each keystroke and updates statistics. */
 class Typing_test_engine {
    public:
     /// Holds live statistics of the current typing test run.
     struct Stats {
-        std::size_t wpm                = 0;
-        std::size_t missed_keystrokes  = 0;
-        std::size_t correct_keystrokes = 0;
+        int wpm                = 0;
+        int missed_keystrokes  = 0;
+        int correct_keystrokes = 0;
     };
 
    public:
     /// Sets the text that will be used in the test, resets Stats.
-    void set_text(std::string const& text)
+    /** Returns a default constructed Stats object. */
+    auto set_text(std::string const& text) -> Stats
     {
         this->reset();
-        text_body_ = text;
+        text_ = text;
+        return stats_;
     }
 
     /// Retrieve the text body.
-    [[nodiscard]] auto get_text() const -> std::string const&
-    {
-        return text_body_;
-    }
+    [[nodiscard]] auto get_text() const -> std::string const& { return text_; }
 
     /// Matches the given char against the current letter, updates Stats.
-    auto commit_keystroke(char c) -> bool
+    [[nodiscard]] auto commit_keystroke(char c) -> std::pair<bool, Stats>
     {
-        if (text_body_.empty() || this->is_complete())
-            return false;
+        if (text_.empty() || this->is_complete())
+            return {false, stats_};
         auto const is_correct = verify_keystroke(c);
-        update_state(is_correct);
-        return is_correct;
+        auto elapsed          = std::optional<Clock_t::duration>{std::nullopt};
+        if (this->at_initial_keystroke())
+            initial_time_ = Clock_t::now();
+        else
+            elapsed = Clock_t::now() - initial_time_;
+        stats_ = increment_stats(stats_, is_correct, elapsed);
+        return {is_correct, stats_};
     }
 
     /// Reset the current index and stats. Does not clear the text body.
-    void reset() { stats_ = Stats{}; }
+    auto reset() -> Stats
+    {
+        stats_ = Stats{};
+        return stats_;
+    }
 
     /// Query if the entire text has been typed.
     [[nodiscard]] auto is_complete() const -> bool
     {
-        return stats_.correct_keystrokes >= text_body_.size();
-    }
-
-    /// Return the Stats object(wpm, missed, total).
-    [[nodiscard]] auto get_stats() const -> Stats { return stats_; }
-
-    /// Set the average length of a word in chars.
-    void set_word_length(std::size_t length)
-    {
-        if (length != 0uL)
-            word_length_ = length;
-    }
-
-    /// Retrieve the set average length of a word.
-    [[nodiscard]] auto get_word_length() const -> std::size_t
-    {
-        return word_length_;
+        return stats_.correct_keystrokes >= (int)text_.size();
     }
 
    private:
     using Clock_t = std::chrono::steady_clock;
 
-    std::string text_body_;
-    std::size_t word_length_ = 5;
+    std::string text_;
     Stats stats_;
     Clock_t::time_point initial_time_;
 
    private:
-    /// Returns whether \p c is at the current index of text_body_.
+    /// Returns whether \p c is at the current index of text_.
     [[nodiscard]] auto verify_keystroke(char c) const -> bool
     {
         return (std::isprint(c) || std::isspace(c)) &&
-               c == text_body_.at(stats_.correct_keystrokes);
+               c == text_.at(stats_.correct_keystrokes);
     }
 
-    /// Updates the stats_ object.
-    void update_state(bool was_accepted)
-    {
-        this->update_keystroke_counts(was_accepted);
-        stats_.wpm = this->get_wpm();
-    }
-
-    /// Updates the words per minute in stats_ according to the current time.
-    auto get_wpm() -> std::size_t
+    /// Returns the words per minute according to the given parameters.
+    [[nodiscard]] static auto generate_wpm(Clock_t::duration elapsed,
+                                           double correct_count) -> int
     {
         using Minute_t = std::chrono::duration<double, std::ratio<60>>;
         using std::chrono::duration_cast;
+        auto constexpr word_length = 5;
 
-        if (this->at_initial_keystroke()) {
-            initial_time_ = Clock_t::now();
-            return 0uL;
-        }
-        else {
-            auto const word_count =
-                static_cast<double>(stats_.correct_keystrokes) / word_length_;
-            auto const time_elapsed = Clock_t::now() - initial_time_;
-            auto const mins = duration_cast<Minute_t>(time_elapsed).count();
-            return std::round(word_count / mins);
-        }
+        auto const word_count = correct_count / word_length;
+        auto const mins       = duration_cast<Minute_t>(elapsed).count();
+        return std::round(word_count / mins);
     }
 
-    /// Update the correct/missed keystroke counts in stats_.
-    void update_keystroke_counts(bool was_accepted)
-    {
-        if (was_accepted)
-            ++stats_.correct_keystrokes;
-        else
-            ++stats_.missed_keystrokes;
-    }
-
+    /// Return true if no keys have been pressed since a reset.
     [[nodiscard]] auto at_initial_keystroke() const -> bool
     {
-        return stats_.correct_keystrokes + stats_.missed_keystrokes == 1uL;
+        return (stats_.correct_keystrokes + stats_.missed_keystrokes) == 1;
+    }
+
+    /// Takes in the current stats and updated depending on \p correct_key.
+    /** Uses \p elapsed to calculate WPM. */
+    [[nodiscard]] static auto increment_stats(
+        Stats current,
+        bool is_correct,
+        std::optional<Clock_t::duration> elapsed) -> Stats
+    {
+        ++(is_correct ? current.correct_keystrokes : current.missed_keystrokes);
+        if (elapsed.has_value())
+            current.wpm = generate_wpm(*elapsed, current.correct_keystrokes);
+        return current;
     }
 };
 
