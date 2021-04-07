@@ -58,7 +58,7 @@ class Set_text_pane : public Set_text_pane_widgets {
         s.erase(end, std::end(s));
     }
 
-    /// Turn newlines into spaces; '’' -> '\''
+    /// Turn newlines into spaces
     static auto tidy_text(ox::Textbox& tb) -> sl::Slot<void()>
     {
         return [&tb]() {
