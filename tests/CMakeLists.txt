@@ -1,6 +1,8 @@
+cmake_minimum_required(VERSION 3.2 FATAL_ERROR)
+
 # Tests
-add_executable(typer_tests EXCLUDE_FROM_ALL 
-    tests_main.cpp
+add_executable(typer_tests EXCLUDE_FROM_ALL
+    tests.main.cpp
     typing_test_engine_test.cpp
 )
 
